@@ -7,7 +7,7 @@ import os
 bot = commands.Bot(command_prefix = prefix)
 
 @bot.command()
-async def load(ctx, cogName):
+async def load(ctx, cogName): #ctx/context is required for commands
     '''Loads a cog onto the bot.'''
     bot.load_extension(f"cogs.{cogName}") #loads the cog in /cogs/cogName.py
     print(f"{cogName} was loaded succesfully!")
