@@ -12,5 +12,6 @@ class Greetings(commands.Cog):
     async def greet(self, ctx):
         await ctx.send("Hai hai")
 
+
 def setup(bot):
     bot.add_cog(Greetings(bot)) #passes an instance of the Class to the bot to use his commands
