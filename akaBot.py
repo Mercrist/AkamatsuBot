@@ -1,15 +1,18 @@
-from config import token, prefix
 from discord.ext import commands
 import discord
-import asyncio
 import os
+import logging
+import config
 class AkaBot(commands.Bot):
     def __init__(self):
-        super().__init__(command_prefix = prefix) #uses the commands.Bot init and replaces self.bot with self
+        intents = discord.Intents.default()  #https://discordpy.readthedocs.io/en/latest/intents.html, needed for member specific events
+        intents.members = True
+        super().__init__(command_prefix = config.prefix, intents = intents) #uses the commands.Bot init and replaces self.bot with self
         self.load_cogs()
         self.add_command(self.load) #to be able to make load and unload commands without putting those in a Cog
         self.add_command(self.unload) #an easier way would be to declare these with @bot.event outside of the Class
         self.add_command(self.reload)
+        logging.basicConfig(level=logging.INFO)
 
     async def on_ready(self): #https://i.imgur.com/pSnob7p.png
         print("Bot's online!")
@@ -18,6 +21,7 @@ class AkaBot(commands.Bot):
         '''Loads all available cogs in the cogs directory.'''
         for filename in os.listdir('./cogs'):
             if filename.endswith('.py'):
+                print(f"Loading... cogs.{filename[:-3]}")
                 self.load_extension(f"cogs.{filename[:-3]}")  #removes the .py from CogName.py
 
     #not using self for the bottom commands, it gets passed as a Context argument; using ctx.bot as self instead
@@ -48,4 +52,4 @@ class AkaBot(commands.Bot):
 
 if __name__ == '__main__':
     bot = AkaBot()
-    bot.run(token)
+    bot.run(config.token)

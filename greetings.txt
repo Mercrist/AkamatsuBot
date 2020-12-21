@@ -1,0 +1,6 @@
+Welcome to the server {0}, enjoy your stay!
+{0} has crash landed!
+I chose the impossible. I chose... {0}... Welcome!
+It was the best of times, it was the worst of times, it was the time {0} joined. Welcome!
+{0} has joined the Covenant. Hello!
+On that day, {0} received a grim reminder. We lived in fear of {1}...Welcome!
