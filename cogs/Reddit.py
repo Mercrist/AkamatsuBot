@@ -14,8 +14,13 @@ class Reddit(commands.Cog):
                              password = config.passwd,
                              user_agent= config.agent)
 
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandOnCooldown):
+            await ctx.send("You're going too fast, slow down!")
+
     @commands.command(pass_context = True)
-    @commands.cooldown(5, 30, commands.BucketType.user) #can use this 4 times every thirty seconds per user
+    @commands.cooldown(5, 20, commands.BucketType.user) #can use this 4 times every thirty seconds per user
     async def sub(self, ctx, sub):
         '''Gets top hot posts from a specified subreddit. Displays four embeds at a time.'''
         desc = f"🔥Currently displaying the top five hottest posts for r/{sub}!"
