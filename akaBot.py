@@ -31,7 +31,8 @@ class AkaBot(commands.Bot):
         is_owner = await ctx.bot.is_owner(ctx.author) #prevents other users from loading or unloading the bot
         if is_owner:
             ctx.bot.load_extension(f"cogs.{cogName}") #loads the cog in /cogs/cogName.py
-            await ctx.send(f"{cogName} was loaded succesfully!")
+            embed = discord.Embed(description= f"{cogName} was loaded succesfully!", colour= discord.Color.dark_orange())
+            await ctx.send(embed = embed)
 
     @commands.command()
     async def unload(ctx, cogName): #by using cogs, you dont have to turn the bot offline, simply unload the cogs with the command
@@ -39,7 +40,8 @@ class AkaBot(commands.Bot):
         is_owner = await ctx.bot.is_owner(ctx.author)
         if is_owner:
             ctx.bot.unload_extension(f"cogs.{cogName}")
-            await ctx.send(f"{cogName} was unloaded succesfully!")
+            embed = discord.Embed(description=f"{cogName} was loaded succesfully!", colour=discord.Color.dark_orange())
+            await ctx.send(embed=embed)
 
     @commands.command()
     async def reload(ctx, cogName):
@@ -48,7 +50,8 @@ class AkaBot(commands.Bot):
         if is_owner:
             ctx.bot.unload_extension(f"cogs.{cogName}")
             ctx.bot.load_extension(f"cogs.{cogName}")
-            await ctx.send(f"{cogName} was reloaded succesfully!")
+            embed = discord.Embed(description=f"{cogName} was loaded succesfully!", colour=discord.Color.dark_orange())
+            await ctx.send(embed=embed)
 
 if __name__ == '__main__':
     bot = AkaBot()
