@@ -10,28 +10,39 @@ class Reddit(commands.Cog):
         self.bot = bot
         self.reddit = praw.Reddit(client_id = config.ID,
                              client_secret = config.secret,
-                             username = config.username,
-                             password = config.passwd,
                              user_agent= config.agent)
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send("You're going too fast, slow down!")
+            embed = discord.Embed(description=f"You're going too fast, slow down!", colour=discord.Color.gold())
+            await ctx.send(embed=embed)
 
-    @commands.command(pass_context = True)
-    @commands.cooldown(5, 20, commands.BucketType.user) #can use this 4 times every thirty seconds per user
+    @commands.command()
+    @commands.cooldown(5, 20, commands.BucketType.user) #can use this 4 times every 20 seconds per user
     async def sub(self, ctx, sub):
         '''Gets top hot posts from a specified subreddit. Displays four embeds at a time.'''
-        desc = f"🔥Currently displaying the top five hottest posts for r/{sub}!"
+        sub = self.reddit.subreddit(sub)
+        if sub.over18 and not ctx.channel.is_nsfw():
+            embed = discord.Embed(description=f"Can't link NSFW subreddits in a non NSFW discord channel.", colour=discord.Color.gold())
+            await ctx.send(embed=embed)
+            raise TypeError
+        reactions = {"left": "⬅️", "right": "➡️"}
+        desc = f"🔥Currently displaying the hottest posts for /r/{sub}!"
         time = datetime.utcnow()
         color = discord.Color.dark_red()
         embed = discord.Embed(title = f"/r/{sub}", description = desc, url = f"https://www.reddit.com/r/{sub}", timestamp = time, colour = color)
         #subreddit fetching
-        sub = self.reddit.subreddit(sub)
-        posts = sub.hot(limit=5)  #limit is the amount of requests we make
+        posts = sub.hot(limit=5)  #limit is the amount of requests we make/posts we're getting
+        for post in posts:
+            post_created = datetime.fromtimestamp(int(post.created_utc)).strftime('%m-%d-%Y at %H:%M:%S')
+            embed.add_field(name = f":arrow_up: {post.score} upvotes! | Posted by /u/{post.author.name} on {post_created}", value = f"[{post.title}](https://www.reddit.com{post.permalink})", inline = False)
         embed.set_thumbnail(url = sub.icon_img)
-        await ctx.send(embed = embed)
+        #emoji reaction events
+        message = await ctx.send(embed = embed) #to be able to use reactions on the sent message
+        await message.add_reaction(reactions["left"])
+        await message.add_reaction(reactions["right"])
 
+#ADD MESSAGES AND REACT EMOJIS TO SCROLL THROUGH SUB
 def setup(bot):
     bot.add_cog(Reddit(bot))
