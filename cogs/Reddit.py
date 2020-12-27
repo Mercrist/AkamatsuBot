@@ -1,6 +1,7 @@
 from datetime import datetime
 from discord.ext import commands
 from disputils import BotEmbedPaginator
+from random import randint
 import config #parent directory is a module so we can import from it (https://stackoverflow.com/questions/8951255/import-script-from-a-parent-directory/8951269)
 import praw
 import discord
@@ -21,7 +22,7 @@ class Reddit(commands.Cog):
 
 
     @commands.command()
-    @commands.cooldown(5, 15, commands.BucketType.user) #can use this 4 times every 20 seconds per user
+    @commands.cooldown(5, 10, commands.BucketType.user) #can use this 4 times every 20 seconds per user
     async def sub(self, ctx, sub):
         '''Gets top hot posts from a specified subreddit. Displays four embeds at a time.'''
         sub = self.reddit.subreddit(sub)
@@ -56,7 +57,7 @@ class Reddit(commands.Cog):
         await paginator.run()
 
     @commands.command()
-    @commands.cooldown(5, 15, commands.BucketType.user)  # can use this 4 times every 20 seconds per user
+    @commands.cooldown(5, 10, commands.BucketType.user)  # can use this 4 times every 20 seconds per user
     async def subrand(self, ctx, sub):
         '''Gets a random hot post from a subreddit.'''
         sub = self.reddit.subreddit(sub)
@@ -64,6 +65,25 @@ class Reddit(commands.Cog):
             embed = discord.Embed(description=f"Can't link NSFW subreddits in a non NSFW discord channel.", colour=discord.Color.gold())
             await ctx.send(embed=embed)
             raise TypeError
+
+        submissions = [posts for posts in sub.hot(limit = 20)]
+        submission = submissions[randint(0, 19)]
+
+        embed = discord.Embed(title=f"/u/{submission.author.name}", description = f"**{submission.title}**", url=f"https://www.reddit.com/user/{submission.author.name}", timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
+
+        if submission.is_self: #is a text post
+            text = submission.selftext
+            #check for embed max text field length
+            if len(text) > 900: #bottom calculation is amount of characters it went over by
+                text = text[:900-len(text)] + "..."
+            embed.add_field(name="Post content:",value=f"[{text}](https://www.reddit.com{submission.permalink})", inline=False)
+        else:
+            embed.add_field(name= "Post content:", value=f"[{submission.url}](https://www.reddit.com{submission.permalink})", inline=False)
+
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        embed.set_thumbnail(url= submission.thumbnail)
+        await ctx.send(embed = embed)
+
 
 def setup(bot):
     bot.add_cog(Reddit(bot))
