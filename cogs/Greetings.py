@@ -1,7 +1,7 @@
 from discord.ext import commands
 from random import randint
 class Greetings(commands.Cog):
-    '''When the bot first joins the server.'''
+    '''Contains the listener for when a user first joins a server the bot is in.'''
     def __init__(self, bot):
         self.bot = bot
 
