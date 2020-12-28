@@ -3,6 +3,7 @@ import discord
 import os
 import logging
 import config
+logging.basicConfig(level=logging.INFO)
 class AkaBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.default()  #https://discordpy.readthedocs.io/en/latest/intents.html, needed for member specific events
@@ -12,7 +13,6 @@ class AkaBot(commands.Bot):
         self.add_command(self.load) #to be able to make load and unload commands without putting those in a Cog
         self.add_command(self.unload) #an easier way would be to declare these with @bot.event outside of the Class
         self.add_command(self.reload)
-        logging.basicConfig(level=logging.INFO)
 
     async def on_ready(self): #https://i.imgur.com/pSnob7p.png
         print("Bot's online!")
