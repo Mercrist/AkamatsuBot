@@ -3,6 +3,7 @@ from datetime import datetime
 import discord
 import urllib.request
 import json
+import pathlib
 class Animals(commands.Cog):
     '''List of commands which display images for certain animals.'''
     def __init__(self, bot):
@@ -22,7 +23,17 @@ class Animals(commands.Cog):
             data = json.loads(url.read().decode()) #uses urllib to read and deocde the link, then loads it with the json library
             link = data["message"]
 
-        embed = discord.Embed(title = "Dog", timestamp = datetime.utcnow(), colour = discord.Color.light_grey())
+        path = urllib.parse.urlparse(link).path #get the url/link path, ex. everthing from /breeds/ onwards: /breeds/hound-walker/n02089867_1471.jpg
+        dogName = pathlib.Path(path).parts[2] #treat the link's path as a directory path, pathlib.Path(path).parts returns a tuple containing each part of the path
+                                             #elaborating on the above stated with an example: ('/', 'breeds', 'hound-walker', 'n02089867_1471.jpg')
+
+        if dogName.find("-") != -1:
+            dogName = dogName.split("-")
+            dogName = dogName[1][0].upper()+dogName[1][1:] + " " + dogName[0][0].upper()+dogName[0][1:] #dog API has two word breed names reversed and uncapitalized
+        else:
+            dogName = dogName[0][0].upper() + dogName[1:]
+
+        embed = discord.Embed(title = dogName, timestamp = datetime.utcnow(), colour = discord.Color.light_grey())
         embed.set_image(url = link)
         embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url = ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
