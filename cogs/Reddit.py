@@ -13,7 +13,7 @@ class Reddit(commands.Cog):
                              client_secret = config.secret,
                              user_agent= config.agent)
 
-    @commands.Cog.listener()
+    @commands.Cog.listener() #only need one on_error commands listener for the whole thing for slowdowns
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
             embed = discord.Embed(description=f"You're going too fast, slow down!", colour=discord.Color.gold())
