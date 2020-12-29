@@ -1,53 +1,52 @@
 from discord.ext import commands
 from datetime import datetime
+from random import randint
 import discord
 import urllib.request
 import json
-import pathlib
 class Animals(commands.Cog):
     '''List of commands which display images for certain animals.'''
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(description=f"You're going too fast, slow down!", colour=discord.Color.gold())
-            await ctx.send(embed=embed)
-
     @commands.command()
     @commands.cooldown(10, 15, commands.BucketType.user)
     async def dog(self, ctx):
         '''Fetches a random image of a dog.'''
-        with urllib.request.urlopen("https://dog.ceo/api/breeds/image/random") as url: #cleans up code after reading, even if errors are thrown
-            data = json.loads(url.read().decode()) #uses urllib to read and deocde the link, then loads it with the json library
-            link = data["message"]
+        with urllib.request.urlopen("https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1") as url:  # gets random cat breed ID
+            data = json.loads(url.read().decode())
 
-        path = urllib.parse.urlparse(link).path #get the url/link path, ex. everthing from /breeds/ onwards: /breeds/hound-walker/n02089867_1471.jpg
-        dogName = pathlib.Path(path).parts[2] #treat the link's path as a directory path, pathlib.Path(path).parts returns a tuple containing each part of the path
-                                             #elaborating on the above stated with an example: ('/', 'breeds', 'hound-walker', 'n02089867_1471.jpg')
-
-        if dogName.find("-") != -1:
-            dogName = dogName.split("-")
-            dogName = dogName[1][0].upper()+dogName[1][1:] + " " + dogName[0][0].upper()+dogName[0][1:] #dog API has two word breed names reversed and uncapitalized
-        else:
-            dogName = dogName[0][0].upper() + dogName[1:]
+        dogName = data[0].get("breeds")[0].get("name") #json is a list, 0th index of breeds section contains the name of the dog
+        url = data[0].get("url")
 
         embed = discord.Embed(title = dogName, timestamp = datetime.utcnow(), colour = discord.Color.light_grey())
-        embed.set_image(url = link)
+        embed.set_image(url = url)
         embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url = ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(5, 10, commands.BucketType.user)
+    @commands.cooldown(10, 15, commands.BucketType.user)
     async def cat(self, ctx):
         '''Fetches a random image of a cat.'''
-        pass
+        with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds/") as url: #gets random cat breed ID
+            data = json.loads(url.read().decode())
+        catID = data[randint(0, len(data)-1)]['id']
+
+        with urllib.request.urlopen(f"https://api.thecatapi.com/v1/images/search?breed_ids={catID}&include_breeds=true") as url:
+            data = json.loads(url.read().decode())
+
+        catName = data[0].get("breeds")[0].get("name")
+        url = data[0].get("url")
+
+        embed = discord.Embed(title=catName, timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(255,192,203))
+        embed.set_image(url = url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.cooldown(10, 15, commands.BucketType.user)
     async def buns(self, ctx):
-        '''Fetches a random image of a rabbit/bunny.'''
+        '''Fetches a random image of a rabbit/bunny.''' #fetch off reddit
         pass
 
     @commands.command()
