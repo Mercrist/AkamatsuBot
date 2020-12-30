@@ -4,10 +4,14 @@ from random import randint
 import discord
 import urllib.request
 import json
+import praw, config
 class Animals(commands.Cog):
     '''List of commands which display images for certain animals.'''
     def __init__(self, bot):
         self.bot = bot
+        self.reddit = praw.Reddit(client_id=config.ID,
+                             client_secret=config.secret,
+                             user_agent=config.agent)
 
     @commands.command()
     @commands.cooldown(10, 15, commands.BucketType.user)
@@ -46,8 +50,18 @@ class Animals(commands.Cog):
     @commands.command()
     @commands.cooldown(10, 15, commands.BucketType.user)
     async def buns(self, ctx):
-        '''Fetches a random image of a rabbit/bunny.''' #fetch off reddit
-        pass
+        '''Fetches a random image of a rabbit/bunny.'''
+        sub = self.reddit.subreddit("rabbits")
+        postTypes = [sub.hot(limit=20), sub.new(limit = 20), sub.top("year", limit = 20)] #makes repeated images less frequent
+        submissions = [posts for posts in postTypes[randint(0,2)]]
+        submission = submissions[randint(0, 19)]
+        while submission.domain != 'i.redd.it':
+            submission = submissions[randint(0, 19)]
+
+        embed = discord.Embed(title= "Lootbox Bun!", timestamp=datetime.utcnow(), colour=discord.Color.dark_orange())
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command()
     @commands.cooldown(10, 15, commands.BucketType.user)
