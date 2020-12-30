@@ -27,7 +27,7 @@ class Reddit(commands.Cog):
         if sub.over18 and not ctx.channel.is_nsfw():
             embed = discord.Embed(description=f"Can't link NSFW subreddits in a non NSFW discord channel.", colour=discord.Color.gold())
             await ctx.send(embed=embed)
-            raise TypeError
+            return
 
         desc = f"🔥 Currently displaying the hottest posts for /r/{sub}!"
         time = datetime.utcnow()
@@ -62,23 +62,52 @@ class Reddit(commands.Cog):
         if sub.over18 and not ctx.channel.is_nsfw():
             embed = discord.Embed(description=f"Can't link NSFW subreddits in a non NSFW discord channel.", colour=discord.Color.gold())
             await ctx.send(embed=embed)
-            raise TypeError
+            return
 
         submissions = [posts for posts in sub.hot(limit=20)]
         submission = submissions[randint(0, 19)]
 
-        if submission.thumbnail == "nsfw":
-            thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
-        elif submission.thumbnail == "" or submission.thumbnail.isalpha(): #sometimes the thumbnail is "self" or "default"
-            thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
-        else:
-            thumbnail = submission.thumbnail
+        if submission.domain == 'i.redd.it': #image post
+            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**",
+                                  url=f"https://www.reddit.com/user/{submission.author.name}",
+                                  timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
 
-        embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**", url=f"https://www.reddit.com/user/{submission.author.name}", timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
-        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
-        embed.set_thumbnail(url= thumbnail)
+            if submission.over_18 and not ctx.channel.is_nsfw():
+                embed.add_field(name="Post Content:", value=f"[Image submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
+                                inline=False)
+                embed.set_thumbnail(url="https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0")
 
-        if submission.is_self:  #is a text post
+            #regular image post
+            else:
+                embed.set_image(url= submission.url)
+
+        elif submission.domain == 'v.redd.it': #video post
+            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**",
+                                  url=f"https://www.reddit.com/user/{submission.author.name}",
+                                  timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
+
+            if submission.over_18 and not ctx.channel.is_nsfw():
+                embed.add_field(name="Post Content:", value=f"[Video submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
+                                inline=False)
+                embed.set_thumbnail(url="https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0")
+
+            else:
+                embed.set_thumbnail(url = submission.preview['images'][0]['source']['url'])
+                embed.add_field(name="Post Content:",
+                            value=f"[Submission is a video, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
+                            inline=False)
+
+        elif submission.is_self:  #is a text post
+            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**",
+                                  url=f"https://www.reddit.com/user/{submission.author.name}",
+                                  timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
+
+            if submission.thumbnail == "nsfw" or (submission.over_18 and not ctx.channel.is_nsfw()):
+                thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
+            elif submission.thumbnail == "" or submission.thumbnail.isalpha():  # sometimes the thumbnail is "self" or "default"
+                thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
+            embed.set_thumbnail(url=thumbnail)
+
             text = submission.selftext
             if text == "":
                 text = "Post content is empty, click here to access the thread!" #so that threads like the ones on AskReddit can click on text to be redirected
@@ -89,11 +118,20 @@ class Reddit(commands.Cog):
                             value=f"[{text}](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
                             inline=False)
 
-        else: #images, links, or videos
+        else: #submission is just a link from a third party website
+            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**", url=f"https://www.reddit.com/user/{submission.author.name}", timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
             embed.add_field(name="Post content:",
                             value=f"[{submission.url}](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
                             inline=False)
-        #embed.add_field(name= f":arrow_up: {submission.score} upvotes and {submission.num_comments} comments!", value= None ,inline=False)
+            if submission.thumbnail == "nsfw":
+                thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
+            elif submission.thumbnail == "" or submission.thumbnail.isalpha():  # sometimes the thumbnail is "self" or "default"
+                thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
+            else:
+                thumbnail = submission.thumbnail
+            embed.set_thumbnail(url=thumbnail)
+
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
 def setup(bot):
