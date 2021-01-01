@@ -4,6 +4,7 @@ from random import randint
 import discord
 import urllib.request
 import json
+import requests
 import praw, config
 class Animals(commands.Cog):
     '''List of commands which display images for certain animals.'''
@@ -14,7 +15,7 @@ class Animals(commands.Cog):
                              user_agent=config.agent)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def dog(self, ctx):
         '''Fetches a random image of a dog.'''
         with urllib.request.urlopen("https://api.thedogapi.com/v1/images/search?size=med&mime_types=jpg&format=json&has_breeds=true&order=RANDOM&page=0&limit=1") as url:  # gets random cat breed ID
@@ -29,7 +30,7 @@ class Animals(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def cat(self, ctx):
         '''Fetches a random image of a cat.'''
         with urllib.request.urlopen("https://api.thecatapi.com/v1/breeds/") as url: #gets random cat breed ID
@@ -48,50 +49,96 @@ class Animals(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def buns(self, ctx):
         '''Fetches a random image of a rabbit/bunny.'''
         sub = self.reddit.subreddit("rabbits")
-        postTypes = [sub.hot(limit=20), sub.new(limit = 20), sub.top("year", limit = 20)] #makes repeated images less frequent
+        postTypes = [sub.hot(limit=65), sub.new(limit = 65), sub.top("year", limit = 65)] #50 requests makes repeated images less frequent but not as slow as 100
         submissions = [posts for posts in postTypes[randint(0,2)]]
-        submission = submissions[randint(0, 19)]
+        submission = submissions[randint(0, 64)]
         while submission.domain != 'i.redd.it':
-            submission = submissions[randint(0, 19)]
+            submission = submissions[randint(0, 64)]
 
-        embed = discord.Embed(title= "Lootbox Bun!", timestamp=datetime.utcnow(), colour=discord.Color.dark_orange())
+        embed = discord.Embed(title= "Lootbox Bun!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(128,0,0))
         embed.set_image(url=submission.url)
         embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def otters(self, ctx):
         '''Fetches a random image of an otter.'''
-        pass
+        sub = self.reddit.subreddit("otters")
+        postTypes = [sub.hot(limit= 65), sub.new(limit=65), sub.top("year", limit=65)]
+        submissions = [posts for posts in postTypes[randint(0, 2)]]
+        submission = submissions[randint(0, 64)]
+        while submission.domain != 'i.redd.it':
+            submission = submissions[randint(0, 64)]
+
+        embed = discord.Embed(title="Lootbox Otter!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(139,69,19))
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def ferret(self, ctx):
         '''Fetches a random image of a ferret.'''
-        pass
+        sub = self.reddit.subreddit("ferrets")
+        postTypes = [sub.hot(limit=65), sub.new(limit=65), sub.top("year", limit=65)]
+        submissions = [posts for posts in postTypes[randint(0, 2)]]
+        submission = submissions[randint(0, 64)]
+        while submission.domain != 'i.redd.it':
+            submission = submissions[randint(0, 64)]
+
+        embed = discord.Embed(title="Lootbox Ferret!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(222,184,135))
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
-    async def redpanda(self, ctx):
-        '''Fetches a random image of a red panda.'''
-        pass
-
-    @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def panda(self, ctx):
         '''Fetches a random image of a panda.'''
-        pass
+        sub = self.reddit.subreddit("panda")
+        postTypes = [sub.hot(limit=65), sub.new(limit=65), sub.top("year", limit=65)]
+        submissions = [posts for posts in postTypes[randint(0, 2)]]
+        submission = submissions[randint(0, 64)]
+        while submission.domain != 'i.redd.it':
+            submission = submissions[randint(0, 64)]
+
+        embed = discord.Embed(title="Lootbox Panda!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(255,255,255))
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
     @commands.command()
-    @commands.cooldown(10, 15, commands.BucketType.user)
+    @commands.cooldown(5, 15, commands.BucketType.user)
     async def fox(self, ctx):
         '''Fetches a random image of a fox.'''
-        pass
+        with requests.get("https://randomfox.ca/floof/") as url: #HTTP Error 403: Forbidden with urrlib.request
+            data = json.loads(url.text)
+
+        embed = discord.Embed(title="Lootbox Fox!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(255, 69,0))
+        embed.set_image(url = data["image"])
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.cooldown(5, 15, commands.BucketType.user)
+    async def hamster(self, ctx):
+        '''Fetches a random image of a hamster.'''
+        sub = self.reddit.subreddit("hamsters")
+        postTypes = [sub.hot(limit=65), sub.new(limit=65), sub.top("year", limit=65)]
+        submissions = [posts for posts in postTypes[randint(0, 2)]]
+        submission = submissions[randint(0, 64)]
+        while submission.domain != 'i.redd.it':
+            submission = submissions[randint(0, 64)]
+
+        embed = discord.Embed(title="Lootbox Hamster!", timestamp=datetime.utcnow(), colour=discord.Color.gold())
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Animals(bot))
