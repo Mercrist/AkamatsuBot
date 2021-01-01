@@ -4,7 +4,7 @@ import os
 import logging
 import config
 logging.basicConfig(level=logging.INFO)
-class AkaBot(commands.Bot):
+class AkaBot(commands.AutoShardedBot):
     def __init__(self):
         intents = discord.Intents.default()  #https://discordpy.readthedocs.io/en/latest/intents.html, needed for member specific events
         intents.members = True
