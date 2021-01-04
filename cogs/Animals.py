@@ -1,6 +1,7 @@
 from discord.ext import commands
 from datetime import datetime
 from random import randint
+from bs4 import BeautifulSoup
 import discord
 import urllib.request
 import json
@@ -137,6 +138,24 @@ class Animals(commands.Cog):
 
         embed = discord.Embed(title="Lootbox Hamster!", timestamp=datetime.utcnow(), colour=discord.Color.gold())
         embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
+
+    @commands.command()
+    @commands.cooldown(3, 10, commands.BucketType.user)
+    async def quokka(self, ctx):
+        '''Fetches a random image of a quokka.'''
+        picUrls = []
+        for i in range(5):
+            get_soup = requests.get(f"https://www.gettyimages.com/photos/quokka?page={i+1}&phrase=quokka&sort=mostpopular")
+            soup = BeautifulSoup(get_soup.text, "lxml")
+            pics = soup.findAll("img", {"class": "gallery-asset__thumb gallery-mosaic-asset__thumb"})
+            for tags in range(len(pics)):
+                pics[tags] = pics[tags].get("src")
+            picUrls.extend(pics)
+
+        embed = discord.Embed(title="Lootbox Quokka!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(153, 101, 21))
+        embed.set_image(url=picUrls[randint(0, len(picUrls)-1)])
         embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
