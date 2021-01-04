@@ -3,7 +3,7 @@ from discord.ext import commands
 from disputils import BotEmbedPaginator
 from random import randint
 import config #parent directory is a module so we can import from it (https://stackoverflow.com/questions/8951255/import-script-from-a-parent-directory/8951269)
-import praw
+import praw #asyncpraw doesnt support some attributes like .over18
 import discord
 class Reddit(commands.Cog):
     '''List of commands which fetch posts from specific subreddits.'''
