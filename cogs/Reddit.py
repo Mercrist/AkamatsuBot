@@ -2,6 +2,8 @@ from datetime import datetime
 from discord.ext import commands
 from disputils import BotEmbedPaginator
 from random import randint
+from urllib.parse import urlparse
+import os
 import config #parent directory is a module so we can import from it (https://stackoverflow.com/questions/8951255/import-script-from-a-parent-directory/8951269)
 import praw #asyncpraw doesnt support some attributes like .over18
 import discord
@@ -12,13 +14,6 @@ class Reddit(commands.Cog):
         self.reddit = praw.Reddit(client_id = config.ID,
                              client_secret = config.secret,
                              user_agent= config.agent)
-
-    @commands.Cog.listener() #only need one on_error commands listener for the whole thing for slowdowns
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            embed = discord.Embed(description=f"You're going too fast, slow down!", colour=discord.Color.gold())
-            await ctx.send(embed=embed)
-
     @commands.command()
     @commands.cooldown(5, 15, commands.BucketType.user) #can use this 5 times every 10 seconds per user
     async def sub(self, ctx, sub):
@@ -37,8 +32,10 @@ class Reddit(commands.Cog):
         postList = [items for items in posts]
         if sub.community_icon != "":
             icon = sub.community_icon
-        else:
+        elif sub.icon_img != "":
             icon = sub.icon_img
+        else:
+            icon = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
 
         for i in range(3): #3 pages
             embed = discord.Embed(title = f"/r/{sub}", description = desc, url = f"https://www.reddit.com/r/{sub}", timestamp = time, colour = color)
@@ -64,11 +61,21 @@ class Reddit(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        submissions = [posts for posts in sub.hot(limit=20)]
-        submission = submissions[randint(0, 19)]
+        submissions = [posts for posts in sub.hot(limit=40)]
+        submission = submissions[randint(0, 39)]
+        if sub.community_icon != "":
+            thumbnail = sub.community_icon
+        elif sub.icon_img != "":
+            thumbnail = sub.icon_img
+        else:
+            thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
 
-        if submission.domain == 'i.redd.it': #image post
-            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**",
+        valids = [".png", ".jpg", ".jpeg", ".gif"]
+        path = urlparse(submission.url).path
+        ext = os.path.splitext(path)[1]
+
+        if ext in valids: #image post
+            embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"[{submission.title}](https://www.reddit.com{submission.permalink})",
                                   url=f"https://www.reddit.com/user/{submission.author.name}",
                                   timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
 
@@ -76,8 +83,6 @@ class Reddit(commands.Cog):
                 embed.add_field(name="Post Content:", value=f"[Image submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
                                 inline=False)
                 embed.set_thumbnail(url="https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0")
-
-            #regular image post
             else:
                 embed.set_image(url= submission.url)
 
@@ -104,8 +109,6 @@ class Reddit(commands.Cog):
 
             if submission.thumbnail == "nsfw" or (submission.over_18 and not ctx.channel.is_nsfw()):
                 thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
-            elif submission.thumbnail == "" or submission.thumbnail.isalpha():  # sometimes the thumbnail is "self" or "default"
-                thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
             embed.set_thumbnail(url=thumbnail)
 
             text = submission.selftext
@@ -125,10 +128,6 @@ class Reddit(commands.Cog):
                             inline=False)
             if submission.thumbnail == "nsfw":
                 thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
-            elif submission.thumbnail == "" or submission.thumbnail.isalpha():  # sometimes the thumbnail is "self" or "default"
-                thumbnail = "https://logodownload.org/wp-content/uploads/2018/02/reddit-logo-16.png"
-            else:
-                thumbnail = submission.thumbnail
             embed.set_thumbnail(url=thumbnail)
 
         embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
