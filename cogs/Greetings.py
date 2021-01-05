@@ -8,14 +8,15 @@ class Greetings(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member): #context only passed for commands
         message = open("greetings.txt", "r")
-        message = [elem.strip() for elem in message.readlines()]
-        message = message[randint(0, len(message) - 1)]  # picks a random greeting message
+        msg = [elem.strip() for elem in message.readlines()]
+        msg = msg[randint(0, len(msg) - 1)]  # picks a random greeting message
+        message.close()
         channel = member.guild.system_channel  #gets system channel for when user joins (found in server settings under overview)
         if channel is not None:
             try:
-                await channel.send(message.format(member.mention)) #messages won't work without format
+                await channel.send(msg.format(member.mention)) #messages won't work without format
             except IndexError:
-                await channel.send(message.format(member.guild.name, member.mention))
+                await channel.send(msg.format(member.guild.name, member.mention))
 
 def setup(bot):
     bot.add_cog(Greetings(bot)) #passes an instance of the Class to the bot to use his commands
