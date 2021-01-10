@@ -61,8 +61,8 @@ class Reddit(commands.Cog):
             await ctx.send(embed=embed)
             return
 
-        submissions = [posts for posts in sub.hot(limit=40)]
-        submission = submissions[randint(0, 39)]
+        submissions = [posts for posts in sub.hot(limit=30)]
+        submission = submissions[randint(0, 29)]
         if sub.community_icon != "":
             thumbnail = sub.community_icon
         elif sub.icon_img != "":
@@ -80,8 +80,7 @@ class Reddit(commands.Cog):
                                   timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
 
             if submission.over_18 and not ctx.channel.is_nsfw():
-                embed.add_field(name="Post Content:", value=f"[Image submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
-                                inline=False)
+                embed.add_field(name="Post Content:", value=f"[Image submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})", inline=False)
                 embed.set_thumbnail(url="https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0")
             else:
                 embed.set_image(url= submission.url)
@@ -92,15 +91,12 @@ class Reddit(commands.Cog):
                                   timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
 
             if submission.over_18 and not ctx.channel.is_nsfw():
-                embed.add_field(name="Post Content:", value=f"[Video submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
-                                inline=False)
+                embed.add_field(name="Post Content:", value=f"[Video submission is NSFW, click here to access the thread.](https://www.reddit.com{submission.permalink})", inline=False)
                 embed.set_thumbnail(url="https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0")
 
             else:
                 embed.set_thumbnail(url = submission.preview['images'][0]['source']['url'])
-                embed.add_field(name="Post Content:",
-                            value=f"[Submission is a video, click here to access the thread.](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
-                            inline=False)
+                embed.add_field(name="Post Content:", value=f"[Submission is a video, click here to access the thread.](https://www.reddit.com{submission.permalink})", inline=False)
 
         elif submission.is_self:  #is a text post
             embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**",
@@ -117,20 +113,36 @@ class Reddit(commands.Cog):
             #check for embed max text field length
             elif len(text) > 850:  #bottom calculation is amount of characters it went over by
                 text = text[:850 - len(text)] + "..."
-            embed.add_field(name="Post content:",
-                            value=f"[{text}](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
-                            inline=False)
+            embed.add_field(name="Post content:", value=f"[{text}](https://www.reddit.com{submission.permalink})", inline=False)
 
         else: #submission is just a link from a third party website
             embed = discord.Embed(title=f"/u/{submission.author.name}", description=f"**{submission.title}**", url=f"https://www.reddit.com/user/{submission.author.name}", timestamp=datetime.utcnow(), colour=discord.Color.dark_red())
-            embed.add_field(name="Post content:",
-                            value=f"[{submission.url}](https://www.reddit.com{submission.permalink})\n:arrow_up: **{submission.score} upvotes and {submission.num_comments} comments!**",
-                            inline=False)
+            embed.add_field(name="Post content:", value=f"[{submission.url}](https://www.reddit.com{submission.permalink})", inline=False)
+
             if submission.thumbnail == "nsfw":
                 thumbnail = "https://external-preview.redd.it/aCO4aR1tWeeF_KiMIPzzxYZ3O6Uq8l-5gZ2e14z80kQ.png?auto=webp&s=cad678498dc98098484a09dbc2df1fb9cc528cf0"
             embed.set_thumbnail(url=thumbnail)
 
-        embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
+        embed.set_footer(text=f"Requested by {ctx.message.author} | 👍{submission.score} 💬{submission.num_comments}", icon_url=ctx.message.author.avatar_url)
+        await ctx.send(embed=embed)
+
+    @commands.cooldown(5, 15, commands.BucketType.user)
+    @commands.command()
+    async def meme(self, ctx):
+        '''Posts a random meme from a random meme subreddit'''
+        subs = ["memes", "dankmemes", "greentext", "me_irl", "historymemes", "wholesomememes"]
+        sub = self.reddit.subreddit(subs[randint(0,5)])
+        submissions = [posts for posts in sub.hot(limit=30)]
+        submission = submissions[randint(0, 29)]
+        while submission.domain != 'i.redd.it' and submission.author.is_mod: #dont want mod posts
+            submission = submissions[randint(0, 29)]
+
+        embed = discord.Embed(title=f"/u/{submission.author.name}",
+                                  description=f"[{submission.title}](https://www.reddit.com{submission.permalink})",
+                                  url=f"https://www.reddit.com/user/{submission.author.name}",
+                                  timestamp=datetime.utcnow(), colour=discord.Color.green())
+        embed.set_image(url=submission.url)
+        embed.set_footer(text=f"Requested by {ctx.message.author} | 👍{submission.score} 💬{submission.num_comments}", icon_url=ctx.message.author.avatar_url)
         await ctx.send(embed=embed)
 
 def setup(bot):
