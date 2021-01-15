@@ -15,7 +15,7 @@ class Reddit(commands.Cog):
                              client_secret = config.secret,
                              user_agent= config.agent)
     @commands.command()
-    @commands.cooldown(5, 15, commands.BucketType.user) #can use this 5 times every 10 seconds per user
+    @commands.cooldown(3, 15, commands.BucketType.user) #can use this 3 times every 15 seconds per user
     async def sub(self, ctx, sub):
         '''Gets top hot posts from a specified subreddit. Displays five embeds at a time.'''
         sub = self.reddit.subreddit(sub)
@@ -52,7 +52,7 @@ class Reddit(commands.Cog):
         await paginator.run()
 
     @commands.command()
-    @commands.cooldown(5, 15, commands.BucketType.user)
+    @commands.cooldown(3, 15, commands.BucketType.user)
     async def subpost(self, ctx, sub):
         '''Gets a random hot post from a subreddit.'''
         sub = self.reddit.subreddit(sub)
