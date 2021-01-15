@@ -8,11 +8,12 @@ class AkaBot(commands.AutoShardedBot):
     def __init__(self):
         intents = discord.Intents.default()  #https://discordpy.readthedocs.io/en/latest/intents.html, needed for member specific events
         intents.members = True
-        super().__init__(command_prefix = config.prefix, intents = intents) #uses the commands.AuotoShardedBot init and replaces self.bot with self
+        super().__init__(command_prefix = config.prefix, intents = intents, help_command = None) #uses the commands.AuotoShardedBot init and replaces self.bot with self
         self.load_cogs()
 
     async def on_ready(self):
         print("Bot's online!")
+        await self.change_presence(activity=discord.Game(name="a!help for a list of commands!"))
 
     def load_cogs(self):
         '''Loads all available cogs in the cogs directory.'''

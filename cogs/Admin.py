@@ -1,6 +1,6 @@
+from datetime import datetime
 from discord.ext import commands
 import discord
-from datetime import datetime
 class Admin(commands.Cog):
     '''Commands and events to be used or triggered for administrative purposes.'''
     def __init__(self, bot):
@@ -88,6 +88,23 @@ class Admin(commands.Cog):
                 desc = f"An invite for {ctx.guild.name} has been generated! Share the link for the next {time//60} minutes: {link} "
             embed = discord.Embed(description = desc, timestamp= datetime.utcnow(), colour=discord.Color.blurple())
             await ctx.send(embed = embed)
+
+    @commands.command()
+    async def source(self, ctx):
+        '''Links the bots GitHub page.'''
+        link = "https://github.com/Mercrist/AkamatsuBot"
+        embed = discord.Embed(description= f":newspaper: Access the bots repository [here]({link})!", timestamp=datetime.utcnow(), colour=discord.Color.from_rgb(105,105,105))
+        embed.set_author(name="Bot Repository Link", icon_url="https://image.flaticon.com/icons/png/512/25/25231.png")
+        await ctx.send(embed = embed)
+
+    @commands.command()
+    async def help(self, ctx):
+        '''Returns an embed with list of all available commands.'''
+        embed = discord.Embed(timestamp=datetime.utcnow(), colour= discord.Color.from_rgb(255, 255, 255))
+        embed.set_author(name="List of all avaliable bot commands!", icon_url="https://lh3.googleusercontent.com/proxy/TkGKCrBTpKJo-nuS0hlhDA9t_gfVQ18tcmhuarEXQBOGH7BDoTE5N4zu1F8wIkvhB1EjdeWHnL2AywctMxWpLUyFYhalSKOsAidy3W0g7LCCKlkhoJcMMZFtVOsxpbdPvS4")
+        embed.set_footer(text=f"Requested by {ctx.message.author}.", icon_url=ctx.message.author.avatar_url)
+        embed.add_field(name=":gear: __Admin Commands__ ", value="")
+        await ctx.send(embed = embed)
 
 def setup(bot):
     bot.add_cog(Admin(bot))

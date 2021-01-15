@@ -43,7 +43,7 @@ class Reddit(commands.Cog):
             for post in postList[:5]:
                 post_created = datetime.fromtimestamp(int(post.created_utc)).strftime('%m-%d-%Y at %H:%M:%S')
                 embed.add_field(name = f":arrow_up: {post.score} upvotes and {post.num_comments} comments! | Posted by /u/{post.author.name} on {post_created} UTC", value = f"[{post.title}](https://www.reddit.com{post.permalink})", inline = False)
-                embed.set_footer(text=f"Requested by {ctx.message.author}. Viewing page {i+1} out of 3.", icon_url=ctx.message.author.avatar_url)
+                embed.set_footer(text=f"Requested by {ctx.message.author}", icon_url=ctx.message.author.avatar_url)
                 embed.set_thumbnail(url= icon)
             del postList[:5]  #removes first 5 elements since these have been added to the field already
             embeds.append(embed)
