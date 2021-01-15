@@ -100,10 +100,27 @@ class Admin(commands.Cog):
     @commands.command()
     async def help(self, ctx):
         '''Returns an embed with list of all available commands.'''
+        adminDesc = "**a!setarchive <channel>:** If no system channel has been set, records deleted messages on this channel.\n\n"\
+                    "**a!togglearchive:** On by default. Disables message archiving if it's enabled and vice versa.\n\n" \
+                    "**a!invite <time>:** Creates an invite for the server. If no time is specified, creates a permament invite. For timed invites, time should be passed in minutes.\n\n"\
+                    "**a!source:** View the bot's GitHub repository, bot invite link can be found here."
+
+        animalDesc = "**a!<animal>:** Returns a random image of an animal. Supported animal commands: `dog`, `cat`, `buns`, `otters`, `ferret`, `panda`, `fox`, `hamster`, `quokka`."
+
+        redDesc = "**a!sub <subreddit>:** Returns the top 15 hottest posts from a specified subreddit.\n\n"\
+                  "**a!subpost <subreddit>:** Retrieves a random hot post from a specified subreddit. NSFW subs can only be linked in NSFW channels.\n\n"\
+                  "**a!meme:** Displays a random meme."
+
+        covidDesc = "**a!countries:** Displays a list of all available countries whose COVID spread can be visualized.\n\n"\
+                    "**a!spread <country>:** Embeds a graph visualizing the COVID-19 spread for a given country and displays relevent statistics."
+
         embed = discord.Embed(timestamp=datetime.utcnow(), colour= discord.Color.from_rgb(255, 255, 255))
-        embed.set_author(name="List of all avaliable bot commands!", icon_url="https://lh3.googleusercontent.com/proxy/TkGKCrBTpKJo-nuS0hlhDA9t_gfVQ18tcmhuarEXQBOGH7BDoTE5N4zu1F8wIkvhB1EjdeWHnL2AywctMxWpLUyFYhalSKOsAidy3W0g7LCCKlkhoJcMMZFtVOsxpbdPvS4")
+        embed.set_author(name="List of all avaliable bot commands! Bot prefix is a![command]", icon_url="https://lh3.googleusercontent.com/proxy/TkGKCrBTpKJo-nuS0hlhDA9t_gfVQ18tcmhuarEXQBOGH7BDoTE5N4zu1F8wIkvhB1EjdeWHnL2AywctMxWpLUyFYhalSKOsAidy3W0g7LCCKlkhoJcMMZFtVOsxpbdPvS4")
         embed.set_footer(text=f"Requested by {ctx.message.author}.", icon_url=ctx.message.author.avatar_url)
-        embed.add_field(name=":gear: __Admin Commands__ ", value="")
+        embed.add_field(name=":gear: **__Admin__** ", value= adminDesc, inline= False)
+        embed.add_field(name=":dog: **__Animals__** ", value= animalDesc, inline= False)
+        embed.add_field(name=":globe_with_meridians: **__Reddit__** ", value= redDesc, inline= False)
+        embed.add_field(name=":earth_americas: **__COVID__** ", value= covidDesc, inline= False)
         await ctx.send(embed = embed)
 
 def setup(bot):
