@@ -91,7 +91,29 @@ class COVID(commands.Cog):
                     dateX.append(dateutil.parser.parse(js[i]["Date"]))
 
                 r = relativedelta.relativedelta(dateX[-1], dateX[0])
-                elapsedDesc = f"**{r.months} months and {r.days} days**" if r.years == 0 else f"**{r.years} years, {r.months} months, and {r.days} days**"
+
+                if r.years == 1: #so it doesn't display "1 years"
+                    elapsedDesc = f"**{r.years} year"
+
+                elif r.years > 1:
+                    elapsedDesc = f"**{r.years} years"
+
+                if r.months == 1:
+                    elapsedDesc += f", {r.months} month"
+
+                elif r.months > 1:
+                    elapsedDesc += f", {r.months} months"
+
+                if r.months != 0: #ex. without this itd be "1 year, and x days" instead of "1 year and x days"
+                    elapsedDesc += ", "
+
+                if r.days == 1:
+                    elapsedDesc += f"and {r.days} day"
+
+                elif r.days > 1:
+                    elapsedDesc += f"and {r.days} days"
+
+                elapsedDesc += "**"
                 lastDate = f"COVID graph data updated as of {dateX[-1].month}/{dateX[-1].day}/{dateX[-1].year}"
 
                 embed = discord.Embed(description = "**Coronavirus infection stats:** ", timestamp = datetime.utcnow(), colour = discord.Color.from_rgb(191, 255, 0))
@@ -100,7 +122,7 @@ class COVID(commands.Cog):
                 embed.add_field(name = ":skull_crossbones: __Recent Deaths__ ", value = f"**{data['TotalDeaths']:,}** (+{data['NewDeaths']:,})")
                 embed.add_field(name = ":health_worker: __Recent Recovered__ ", value = f"**{data['TotalRecovered']:,}** (+{data['NewRecovered']:,})")
                 embed.add_field(name = ":chart_with_downwards_trend: __Mortality Rate__ ", value = f"**{round((data['TotalDeaths']/max(confirmedY))*100, 2):,}%**")
-                embed.add_field(name = ":chart_with_upwards_trend: __Recovery Rate__ ", value = f"**{round((data['NewRecovered']/max(confirmedY))*100, 2):,}%**")
+                embed.add_field(name = ":chart_with_upwards_trend: __Recovery Rate__ ", value = f"**{round((data['TotalRecovered']/max(confirmedY))*100, 2):,}%**")
                 embed.add_field(name = ":calendar: __Time Elapsed__ ", value = elapsedDesc)
                 embed.set_footer(text=f"Requested by {ctx.message.author} | {lastDate}", icon_url=ctx.message.author.avatar_url)
 
