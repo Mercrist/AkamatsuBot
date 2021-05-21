@@ -2,7 +2,7 @@
 
 ![Python][1] ![Discord][2] ![PRAW][3] ![Matplot][4] ![Soup][5]
 
-<img src="https://i.imgur.com/ktIpxg1.png" align="right"
+<img src="https://i.imgur.com/ktIpxg1.png" align="top"
      alt="AkamatsuBot Logo" width="250" height="250">
 
 [1]: https://img.shields.io/badge/python%20-3.8.1-blue
