@@ -12,7 +12,7 @@ A list of available commands, along with screenshots and an invite link, is show
 
 * The bot's prefix is `a!`. Every command must be prefixed by this.
 * `a!help` brings up a list of available commands!
-* <img src=" https://i.imgur.com/Ntf4Z0Z.png" alt="AkamatsuBot Logo" width="638" height="651">
+* <img src=" https://i.imgur.com/Ntf4Z0Z.png" alt="Commands list" width="638" height="651">
 
 [1]: https://img.shields.io/badge/python%20-3.8.1-blue
 [2]: https://img.shields.io/badge/discord.py-1.5.1-%235d8aa8
