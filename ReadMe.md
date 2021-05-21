@@ -12,7 +12,7 @@ A list of available commands, along with screenshots and an invite link, is show
 
 * The bot's prefix is `a!`. Every command must be prefixed by this.
 * `a!help` brings up a list of available commands!
-* <img align="center" style="float: centrer; margin: 0 10px 0 0;" src="https://i.imgur.com/Ntf4Z0Z.png" height="638" width="651"/>
+* <img align="center" style="float: centrer; margin: 0 10px 0 0;" src="https://i.imgur.com/Ntf4Z0Z.png" height="494" width="504"/>
 
 [1]: https://img.shields.io/badge/python%20-3.8.1-blue
 [2]: https://img.shields.io/badge/discord.py-1.5.1-%235d8aa8
