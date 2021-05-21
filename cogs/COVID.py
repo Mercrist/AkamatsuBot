@@ -120,7 +120,7 @@ class COVID(commands.Cog):
                 embed.set_author(name = f"Displaying COVID-19 infection graph for: {country.title()}", icon_url= "https://www.wnpr.org/sites/wnpr/files/styles/x_large/public/202004/SARS-CoV-2_without_background.png")
                 embed.add_field(name = ":white_check_mark: __Confirmed Infections__ ", value = f"**{max(confirmedY):,}** (+{data['NewCases']:,})")
                 embed.add_field(name = ":skull_crossbones: __Recent Deaths__ ", value = f"**{data['TotalDeaths']:,}** (+{data['NewDeaths']:,})")
-                embed.add_field(name = ":health_worker: __Recent Recovered__ ", value = f"**{data['TotalRecovered']:,}** (+{data['NewRecovered']:,})")
+                embed.add_field(name = ":health_worker: __Recovered__ ", value = f"**{data['TotalRecovered']:,}** (+{data['NewRecovered']:,})")
                 embed.add_field(name = ":chart_with_downwards_trend: __Mortality Rate__ ", value = f"**{round((data['TotalDeaths']/max(confirmedY))*100, 2):,}%**")
                 embed.add_field(name = ":chart_with_upwards_trend: __Recovery Rate__ ", value = f"**{round((data['TotalRecovered']/max(confirmedY))*100, 2):,}%**")
                 embed.add_field(name = ":calendar: __Time Elapsed__ ", value = elapsedDesc)
