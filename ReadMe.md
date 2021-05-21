@@ -2,7 +2,7 @@
 
 ![Python][1] ![Discord][2] ![PRAW][3] ![Matplot][4] ![Soup][5]
 
-<img src="https://149360821.v2.pressablecdn.com/wp-content/uploads/2019/07/Spirit-Animal-Cat.jpg" align="right"
+<img src="https://i.imgur.com/ktIpxg1.png" align="right"
      alt="AkamatsuBot Logo" width="200" height="178">
 
 [1]: https://img.shields.io/badge/python%20-3.8.1-blue
