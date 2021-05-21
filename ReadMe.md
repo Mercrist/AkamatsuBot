@@ -1,11 +1,11 @@
 # AkamatsuBot
 
-![Python][1] ![Discord][2] ![PRAW][3] ![Matplot][4] ![Soup][5] ![License][8] ![ID][11]
+[![Python](https://img.shields.io/badge/python%20-3.8.1-blue)](https://www.python.org/downloads/) [![Discord](https://img.shields.io/badge/discord.py-1.5.1-%235d8aa8)](https://discordpy.readthedocs.io/en/latest/index.html)  [![PRAW/async](https://img.shields.io/badge/asyncpraw-7.1.0-red)](https://asyncpraw.readthedocs.io/en/latest/) [![Matplot](https://img.shields.io/badge/matplotlib-3.3.3-orange)](https://matplotlib.org/)   [![BeautySoup](https://img.shields.io/badge/beautifulsoup-4.9.3-lightgrey)](https://pypi.org/project/beautifulsoup4/) ![License][3] ![ID][6]
 
 <img src="https://i.imgur.com/ktIpxg1.png" align="right"
      alt="AkamatsuBot Logo" width="250" height="250">
      
-AkamatsuBot is a general purpose Discord bot built via [discord.py][6] featuring multimedia integration, admin commands, and a COVID statistics displayer.
+AkamatsuBot is a general purpose Discord bot built via [discord.py][1] featuring multimedia integration, admin commands, and a COVID statistics displayer.
 A list of available commands, along with screenshots and an invite link, is shown below. The bot currently runs on a Raspberry Pi 3.
 
 ## Commands
@@ -35,7 +35,7 @@ A list of available commands, along with screenshots and an invite link, is show
 
 ## Running and more
 
-The bot can be invited to a server via the [following link][7]. Alternatively, one could install and run the bot themselves.
+The bot can be invited to a server via the [following link][2]. Alternatively, one could install and run the bot themselves.
 
 ### Running the bot locally
 
@@ -59,18 +59,11 @@ passwd = "The bot account's password"
 username = "Avccount username"
 agent = "The bot's unique identifier"
 ```
-Refer to the documentation for both [PRAW][9] and [Discord's Developer Portal][10] for more info on how to fill out these fields.
+Refer to the documentation for both [PRAW][4] and [Discord's Developer Portal][5] for more info on how to fill out these fields.
 
-
-
-[1]: https://img.shields.io/badge/python%20-3.8.1-blue
-[2]: https://img.shields.io/badge/discord.py-1.5.1-%235d8aa8
-[3]: https://img.shields.io/badge/asyncpraw-7.1.0-red
-[4]: https://img.shields.io/badge/matplotlib-3.3.3-orange
-[5]: https://img.shields.io/badge/beautifulsoup-4.9.3-lightgrey
-[6]: https://discordpy.readthedocs.io/en/latest/index.html
-[7]: https://discord.com/api/oauth2/authorize?client_id=788839179832262686&permissions=8&scope=bot
-[8]: https://img.shields.io/badge/license-MIT-%23800000
-[9]: https://praw.readthedocs.io/en/latest/getting_started/quick_start.html
-[10]: https://discord.com/developers/docs/intro
-[11]: https://img.shields.io/badge/Discord%20ID-Mercrist%20%236784-%234e5d94
+[1]: https://discordpy.readthedocs.io/en/latest/index.html
+[2]: https://discord.com/api/oauth2/authorize?client_id=788839179832262686&permissions=8&scope=bot
+[3]: https://img.shields.io/badge/license-MIT-%23800000
+[4]: https://asyncpraw.readthedocs.io/en/latest/
+[5]: https://discord.com/developers/docs/intro
+[6]: https://img.shields.io/badge/Discord%20ID-Mercrist%20%236784-%234e5d94
